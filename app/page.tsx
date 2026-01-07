@@ -68,7 +68,7 @@ export default function MirrorOfTheMind() {
         const audio = audioObjects[i];
         audio.volume = 0.7; 
         await new Promise((resolve) => { audio.play(); audio.onended = resolve; });
-        if (i < audioObjects.length - 1) await new Promise(resolve => setTimeout(resolve, 8000));
+        if (i < audioObjects.length - 1) await new Promise(resolve => setTimeout(resolve, 6000));
       }
     } catch (error: any) {
       alert("Erro no cosmos: " + error.message);
