@@ -108,7 +108,7 @@ export default function MirrorOfTheMind() {
           {!showResult ? (
             <div className="w-full space-y-8 animate-in fade-in zoom-in duration-700">
               <label className="block text-lg font-light text-purple-200 italic">
-                O que sua mente reflete hoje?
+                {"O que sua mente reflete hoje?"}
               </label>
               <textarea
                 value={reflection}
