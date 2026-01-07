@@ -40,7 +40,6 @@ export default function MirrorOfTheMind() {
   const handleContemplar = async () => {
     if (!reflection.trim()) return;
     
-    // 1. INÍCIO IMEDIATO: Mostra tela e música
     setLoading(true);
     setShowResult(true);
     setCurrentTime(0);
@@ -61,7 +60,6 @@ export default function MirrorOfTheMind() {
       const data = await response.json();
       const audiosB64 = data.audios;
 
-      // 2. Cálculo de duração
       let estimatedTotal = 6 + (audiosB64.length - 1) * 8;
       const audioObjects = audiosB64.map((b64: string) => new Audio(`data:audio/mpeg;base64,${b64}`));
       
@@ -79,7 +77,6 @@ export default function MirrorOfTheMind() {
         setCurrentTime(prev => prev + 1);
       }, 1000);
 
-      // --- SEQUÊNCIA DE REPRODUÇÃO ---
       await new Promise(resolve => setTimeout(resolve, 6000));
 
       for (let i = 0; i < audioObjects.length; i++) {
@@ -110,17 +107,14 @@ export default function MirrorOfTheMind() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden bg-[#0f0c29] text-white p-6">
       
-      {/* 1. FUNDO ESPACIAL */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0f0c29] via-[#302b63] to-[#24243e] z-0" />
       
-      {/* 2. ESTRELAS */}
       <div className="absolute inset-0 z-1 pointer-events-none">
         {starElements.map((star) => (
           <div key={star.id} className="star" style={{ top: star.top, left: star.left, width: star.size, height: star.size, animationDuration: star.duration, animationDelay: star.delay }} />
         ))}
       </div>
 
-      {/* 3. PLANETA GASOSO */}
       <div className="absolute top-10 right-10 md:top-12 md:right-12 z-2 opacity-80 pointer-events-none">
         <div className="relative w-28 h-28 md:w-40 md:h-40">
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-800 to-purple-900 shadow-[0_0_50px_rgba(100,0,200,0.5)]"></div>
@@ -142,7 +136,7 @@ export default function MirrorOfTheMind() {
         <div className="w-full min-h-[400px] flex flex-col items-center justify-center">
           {!showResult ? (
             <div className="w-full space-y-8 animate-in fade-in zoom-in duration-700">
-              <label className="block text-lg font-light text-purple-200 italic">"O que sua mente reflete hoje?"</label>
+              <label className="block text-lg font-light text-purple-200 italic">&quot;O que sua mente reflete hoje?&quot;</label>
               <textarea
                 value={reflection}
                 onChange={(e) => setReflection(e.target.value)}
@@ -161,7 +155,9 @@ export default function MirrorOfTheMind() {
           ) : (
             <div className="w-full bg-white/10 backdrop-blur-2xl border border-white/20 p-10 rounded-[2.5rem] space-y-8 animate-in zoom-in duration-500 shadow-2xl">
               <div className="space-y-3">
-                <Sparkles className={`mx-auto text-purple-300 ${loading || isPlaying ? 'animate-pulse' : ''}`} size={32} />
+                <div className={`mx-auto text-purple-300 ${loading || isPlaying ? 'animate-pulse' : ''}`}>
+                   <Sparkles size={32} />
+                </div>
                 <p className="text-purple-100 italic font-light tracking-wide">
                   {loading ? "Iniciando jornada..." : isPlaying ? "Em meditação..." : "Sessão concluída"}
                 </p>
