@@ -50,7 +50,7 @@ export default function MirrorOfTheMind() {
         body: JSON.stringify({ mood: reflection }),
         headers: { 'Content-Type': 'application/json' }
       });
-      if (!response.ok) throw new Error('Erro na conexão');
+      if (!response.ok) throw new Error('Erro na conexao');
       const data = await response.json();
       const audiosB64 = data.audios;
       let estimatedTotal = 6 + (audiosB64.length - 1) * 8;
@@ -127,10 +127,10 @@ export default function MirrorOfTheMind() {
             <div className="w-full bg-white/10 backdrop-blur-2xl border border-white/20 p-10 rounded-[2.5rem] space-y-8 animate-in zoom-in duration-500 shadow-2xl">
               <div className="space-y-3">
                 <div className="flex justify-center items-center">
-                   <Sparkles className={`text-purple-300 ${loading || isPlaying ? 'animate-pulse' : ''}`} size={32} />
+                   <Sparkles className={loading || isPlaying ? 'animate-pulse text-purple-300' : 'text-purple-300'} size={32} />
                 </div>
                 <p className="text-purple-100 italic font-light tracking-wide">
-                  {loading ? "Iniciando jornada..." : isPlaying ? "Em meditação..." : "Sessão concluída"}
+                  {loading ? "Iniciando jornada..." : isPlaying ? "Em meditacao..." : "Sessao concluida"}
                 </p>
               </div>
               <div className="py-6 space-y-4">
