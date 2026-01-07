@@ -126,8 +126,8 @@ export default function MirrorOfTheMind() {
           ) : (
             <div className="w-full bg-white/10 backdrop-blur-2xl border border-white/20 p-10 rounded-[2.5rem] space-y-8 animate-in zoom-in duration-500 shadow-2xl">
               <div className="space-y-3">
-                <div className="flex justify-center items-center h-10">
-                  <Sparkles className={`text-purple-300 ${loading || isPlaying ? 'animate-pulse' : ''}`} size={32} />
+                <div className="flex justify-center items-center">
+                   <Sparkles className={`text-purple-300 ${loading || isPlaying ? 'animate-pulse' : ''}`} size={32} />
                 </div>
                 <p className="text-purple-100 italic font-light tracking-wide">
                   {loading ? "Iniciando jornada..." : isPlaying ? "Em meditação..." : "Sessão concluída"}
