@@ -107,7 +107,9 @@ export default function MirrorOfTheMind() {
         <div className="w-full min-h-[400px] flex flex-col items-center justify-center">
           {!showResult ? (
             <div className="w-full space-y-8 animate-in fade-in zoom-in duration-700">
-              <label className="block text-lg font-light text-purple-200 italic">O que sua mente reflete hoje?</label>
+              <label className="block text-lg font-light text-purple-200 italic">
+                O que sua mente reflete hoje?
+              </label>
               <textarea
                 value={reflection}
                 onChange={(e) => setReflection(e.target.value)}
@@ -127,7 +129,7 @@ export default function MirrorOfTheMind() {
             <div className="w-full bg-white/10 backdrop-blur-2xl border border-white/20 p-10 rounded-[2.5rem] space-y-8 animate-in zoom-in duration-500 shadow-2xl">
               <div className="space-y-3">
                 <div className="flex justify-center items-center">
-                   <div className={loading || isPlaying ? 'animate-pulse text-purple-300' : 'text-purple-300'}>
+                   <div className={loading || isPlaying ? "animate-pulse text-purple-300" : "text-purple-300"}>
                      <Sparkles size={32} />
                    </div>
                 </div>
@@ -152,7 +154,7 @@ export default function MirrorOfTheMind() {
               <button 
                 onClick={() => {
                   setShowResult(false); 
-                  setReflection(''); 
+                  setReflection(""); 
                   if (timerRef.current) clearInterval(timerRef.current);
                   if (bgMusicRef.current) { bgMusicRef.current.pause(); bgMusicRef.current.currentTime = 0; }
                 }} 
