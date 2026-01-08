@@ -17,6 +17,8 @@ export default function MirrorOfTheMind() {
 
   useEffect(() => {
     setMounted(true);
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, []);
 
@@ -98,6 +100,10 @@ export default function MirrorOfTheMind() {
 
       for (let i = 0; i < audioObjects.length; i++) {
         const audio = audioObjects[i];
+        audio.preservesPitch = false; // Truque para Safari tratar como áudio simples
+        audio.volume = 0.9; 
+        if (bgMusicRef.current) bgMusicRef.current.volume = 0.1; // Baixa bem a música
+        await audio.play();
         audio.volume = 0.7; 
         await new Promise((resolve) => { 
           audio.play().catch(resolve); 
