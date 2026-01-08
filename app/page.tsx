@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Sparkles, Loader2, RefreshCw, Clock } from 'lucide-react';
+import { Sparkles, Loader2, RefreshCw, Clock, Download } from 'lucide-react';
 
 export default function MirrorOfTheMind() {
   const [reflection, setReflection] = useState('');
@@ -10,6 +10,8 @@ export default function MirrorOfTheMind() {
   const [showResult, setShowResult] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [totalDuration, setTotalDuration] = useState(0);
+  const [lastAudioData, setLastAudioData] = useState<string[]>([]);
+  
   const bgMusicRef = useRef<HTMLAudioElement | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -35,43 +37,77 @@ export default function MirrorOfTheMind() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const handleDownload = () => {
+    if (lastAudioData.length === 0) return;
+    try {
+      const link = document.createElement('a');
+      link.href = `data:audio/mpeg;base64,${lastAudioData[0]}`;
+      link.download = `reflexao-mirror-${new Date().getTime()}.mp3`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      alert("Não foi possível processar o download.");
+    }
+  };
+
   const handleContemplar = async () => {
     if (!reflection.trim()) return;
     setLoading(true);
     setShowResult(true);
     setCurrentTime(0);
+    setLastAudioData([]);
+
     if (bgMusicRef.current) {
       bgMusicRef.current.volume = 0.2;
       bgMusicRef.current.play().catch(() => {});
     }
+
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
         body: JSON.stringify({ mood: reflection }),
         headers: { 'Content-Type': 'application/json' }
       });
-      if (!response.ok) throw new Error('Erro na conexao');
+
+      if (!response.ok) throw new Error('Falha na conexão com o servidor');
+      
       const data = await response.json();
+      
+      if (!data.audios) throw new Error('O cosmos não enviou o áudio');
+
       const audiosB64 = data.audios;
+      setLastAudioData(audiosB64);
+
       let estimatedTotal = 6 + (audiosB64.length - 1) * 8;
       const audioObjects = audiosB64.map((b64: string) => new Audio(`data:audio/mpeg;base64,${b64}`));
+
       await Promise.all(audioObjects.map((a: HTMLAudioElement) => 
-        new Promise((r) => { a.onloadedmetadata = r; setTimeout(r, 1000); })
+        new Promise((r) => { a.onloadedmetadata = r; setTimeout(r, 1500); })
       ));
+
       const speechDuration = audioObjects.reduce((acc: number, a: HTMLAudioElement) => acc + (a.duration || 5), 0);
       setTotalDuration(Math.round(estimatedTotal + speechDuration));
+      
       setIsPlaying(true);
       setLoading(false);
+
       timerRef.current = setInterval(() => { setCurrentTime(prev => prev + 1); }, 1000);
+
       await new Promise(resolve => setTimeout(resolve, 6000));
+
       for (let i = 0; i < audioObjects.length; i++) {
         const audio = audioObjects[i];
         audio.volume = 0.7; 
-        await new Promise((resolve) => { audio.play(); audio.onended = resolve; });
-        if (i < audioObjects.length - 1) await new Promise(resolve => setTimeout(resolve, 6000));
+        await new Promise((resolve) => { 
+          audio.play().catch(resolve); 
+          audio.onended = resolve; 
+        });
+        if (i < audioObjects.length - 1) await new Promise(resolve => setTimeout(resolve, 7000));
       }
     } catch (error: any) {
-      alert("Erro no cosmos: " + error.message);
+      console.error(error);
+      alert("Erro no cosmos: Verifique sua chave API no Netlify.");
       setShowResult(false);
     } finally {
       setIsPlaying(false);
@@ -89,13 +125,7 @@ export default function MirrorOfTheMind() {
           <div key={star.id} className="star" style={{ top: star.top, left: star.left, width: star.size, height: star.size, animationDuration: star.duration, animationDelay: star.delay }} />
         ))}
       </div>
-      <div className="absolute top-10 right-10 md:top-12 md:right-12 z-2 opacity-80 pointer-events-none">
-        <div className="relative w-28 h-28 md:w-40 md:h-40">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-800 to-purple-900 shadow-[0_0_50px_rgba(100,0,200,0.5)]"></div>
-          <div className="absolute inset-0 rounded-full bg-gradient-to-tl from-purple-400/20 to-transparent blur-xl scale-110"></div>
-          <div className="absolute inset-0 rounded-full shadow-[inset_10px_10px_30px_rgba(0,0,0,0.4)]"></div>
-        </div>
-      </div>
+
       <main className="z-10 w-full max-w-md flex flex-col items-center text-center space-y-12">
         <header className="space-y-4">
           <h1 className="text-4xl md:text-5xl font-extralight tracking-[0.3em] uppercase drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
@@ -103,12 +133,14 @@ export default function MirrorOfTheMind() {
           </h1>
           <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-purple-400 to-transparent mx-auto" />
         </header>
+
         <audio ref={bgMusicRef} src="https://raw.githubusercontent.com/mirrorofthemind/public-musics/main/10%20Minutes%20of%20Relaxing%20Piano%20Music%20-%20Wawa%20(youtube).mp3" loop />
+
         <div className="w-full min-h-[400px] flex flex-col items-center justify-center">
           {!showResult ? (
             <div className="w-full space-y-8 animate-in fade-in zoom-in duration-700">
               <label className="block text-lg font-light text-purple-200 italic">
-                {"O que sua mente reflete hoje?"}
+              O que sua mente reflete hoje?
               </label>
               <textarea
                 value={reflection}
@@ -128,44 +160,51 @@ export default function MirrorOfTheMind() {
           ) : (
             <div className="w-full bg-white/10 backdrop-blur-2xl border border-white/20 p-10 rounded-[2.5rem] space-y-8 animate-in zoom-in duration-500 shadow-2xl">
               <div className="space-y-3">
-                <div className="flex justify-center items-center">
-                <div className={loading || isPlaying ? "animate-pulse text-purple-300" : "text-purple-300"}>
-                  <Sparkles size={32} />
-                </div>
-                </div>
+                <Sparkles className="mx-auto text-purple-300 animate-pulse" size={32} />
                 <p className="text-purple-100 italic font-light tracking-wide">
-                  {loading ? "Iniciando jornada..." : isPlaying ? "Em meditacao..." : "Sessao concluida"}
-                </p>
+                {loading ? "Iniciando jornada..." : isPlaying ? "Em meditação..." : "Sessão concluída"}
+              </p>
               </div>
+
               <div className="py-6 space-y-4">
                 <div className="flex items-center justify-center gap-2 text-2xl font-mono text-purple-200">
                   <Clock size={20} className="text-purple-400" />
                   <span>{formatTime(currentTime)}</span>
                   <span className="text-purple-400/50">/</span>
-                  <span className="text-purple-400/50">{formatTime(totalDuration || 120)}</span>
+                  <span className="text-purple-400/50">{formatTime(totalDuration || 60)}</span>
                 </div>
                 <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                  <div 
-                    className="bg-gradient-to-r from-purple-500 to-indigo-500 h-full transition-all duration-1000"
-                    style={{ width: `${totalDuration > 0 ? Math.min((currentTime / totalDuration) * 100, 100) : 0}%` }}
-                  />
+                  <div className="bg-gradient-to-r from-purple-500 to-indigo-500 h-full transition-all duration-1000" style={{ width: `${totalDuration > 0 ? Math.min((currentTime / totalDuration) * 100, 100) : 0}%` }} />
                 </div>
               </div>
-              <button 
-                onClick={() => {
-                  setShowResult(false); 
-                  setReflection(""); 
-                  if (timerRef.current) clearInterval(timerRef.current);
-                  if (bgMusicRef.current) { bgMusicRef.current.pause(); bgMusicRef.current.currentTime = 0; }
-                }} 
-                className="flex items-center gap-2 mx-auto text-[11px] uppercase tracking-[0.3em] text-purple-400 hover:text-white transition-colors pt-4"
-              >
-                <RefreshCw size={14} /> Novo Reflexo
-              </button>
+
+              <div className="flex flex-col gap-4 pt-4">
+                <button 
+                  onClick={handleDownload}
+                  disabled={loading || isPlaying || lastAudioData.length === 0}
+                  className="flex items-center justify-center gap-2 mx-auto px-6 py-2 rounded-full bg-white/10 border border-white/10 hover:bg-white/20 transition-all text-[10px] uppercase tracking-[0.2em] text-purple-200 disabled:opacity-20"
+                >
+                  <Download size={14} /> Baixar Reflexão
+                </button>
+
+                <button 
+                  onClick={() => {
+                    setShowResult(false); 
+                    setReflection(""); 
+                    setLastAudioData([]);
+                    if (timerRef.current) clearInterval(timerRef.current);
+                    if (bgMusicRef.current) { bgMusicRef.current.pause(); bgMusicRef.current.currentTime = 0; }
+                  }} 
+                  className="flex items-center justify-center gap-2 mx-auto text-[11px] uppercase tracking-[0.3em] text-purple-400/70 hover:text-white transition-colors"
+                >
+                  <RefreshCw size={14} /> Novo Reflexo
+                </button>
+              </div>
             </div>
           )}
         </div>
       </main>
+
       <style jsx global>{`
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); animation: twinkle linear infinite; }
         @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.3); } }
