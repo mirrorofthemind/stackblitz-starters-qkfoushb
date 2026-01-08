@@ -140,14 +140,14 @@ export default function MirrorOfTheMind() {
     {!showResult ? (
       <div className="w-full space-y-8 animate-in fade-in zoom-in duration-700">
         <label className="block text-lg font-light text-purple-200 italic">
-          {"O que sua mente reflete hoje?"}
+          {`O que sua mente reflete hoje?`} 
         </label>
         <textarea
           value={reflection}
           onChange={(e) => setReflection(e.target.value)}
           disabled={loading}
           className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 h-44 text-lg shadow-2xl transition-all"
-          placeholder="Compartilhe seus pensamentos..."
+          placeholder={`Compartilhe seus pensamentos...`}
         />
         <button
           onClick={handleContemplar}
