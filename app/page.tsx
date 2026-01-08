@@ -59,7 +59,7 @@ export default function MirrorOfTheMind() {
   unlockAudio.play().catch(() => {});
 
     if (!reflection.trim()) return;
-    setLoading(true);
+    setLoading(false);
     setShowResult(true);
     setCurrentTime(0);
     setLastAudioData([]);
@@ -111,17 +111,19 @@ export default function MirrorOfTheMind() {
         await audio.play();
         audio.volume = 0.7; 
         await new Promise((resolve) => { 
-          audio.play().catch(resolve); 
-          audio.onended = resolve; 
+          audio.onended = () => resolve(null);
+          audio.onerror = () => resolve(null);
+          audio.play().catch(() => resolve(null));
         });
-        if (i < audioObjects.length - 1) await new Promise(resolve => setTimeout(resolve, 7000));
+        if (bgMusicRef.current) bgMusicRef.current.volume = 0.2;
+        if (i < audioObjects.length - 1) await new Promise(resolve => setTimeout(resolve, 5000));
       }
     } catch (error: any) {
       console.error(error);
       alert("Erro real: " + (error.message || "Erro desconhecido"));
       setShowResult(false);
     } finally {
-      setIsPlaying(false);
+      setIsPlaying(true);
       if (timerRef.current) clearInterval(timerRef.current);
     }
   };
