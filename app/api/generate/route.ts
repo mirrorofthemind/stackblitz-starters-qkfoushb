@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         Reflita sobre: ${mood}.
         
         REGRAS PARA O TEXTO:
-        1. Escreva EXATAMENTE 7 frases longas (mínimo 10 palavras cada).
+        1. Escreva EXATAMENTE 4 frases longas (mínimo 10 palavras cada).
         2. FOCO: Sem rimas. Use instruções de presença e respiração.
         3. ESTILO: Meditação guiada no presente do indicativo.
         4. Use metáforas sobre o cosmos, natureza e tempo.

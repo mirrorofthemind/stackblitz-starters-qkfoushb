@@ -12,9 +12,8 @@ export default function MirrorOfTheMind() {
   const [totalDuration, setTotalDuration] = useState(0);
   const [lastAudioData, setLastAudioData] = useState<string[]>([]);
   
-  const bgMusicRef = useRef<HTMLAudioElement | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
+  const bgMusicRef = useRef<HTMLAudioElement>(null);
+  const timerRef = useRef<any>(null); // Usar 'any' aqui evita o erro de NodeJS.Timeout
   useEffect(() => {
     setMounted(true);
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -99,7 +98,7 @@ export default function MirrorOfTheMind() {
       setIsPlaying(true);
       setLoading(false);
 
-      timerRef.current = setInterval(() => { setCurrentTime(prev => prev + 1); }, 1000);
+      timerRef.current = setInterval(() => { setCurrentTime((prev) => prev + 1); }, 1000);
 
       await new Promise(resolve => setTimeout(resolve, 0 ));
 
