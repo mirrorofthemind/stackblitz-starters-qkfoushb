@@ -54,6 +54,11 @@ export default function MirrorOfTheMind() {
   };
 
   const handleContemplar = async () => {
+  // --- NOVO: DESBLOQUEIO PARA SAFARI ---
+  // Criamos um áudio vazio e damos play imediato
+  const unlockAudio = new Audio();
+  unlockAudio.play().catch(() => {});
+
     if (!reflection.trim()) return;
     setLoading(true);
     setShowResult(true);
@@ -100,8 +105,9 @@ export default function MirrorOfTheMind() {
 
       for (let i = 0; i < audioObjects.length; i++) {
         const audio = audioObjects[i];
+        (audio as any).webkitPlaysInline = true;
         audio.preservesPitch = false; // Truque para Safari tratar como áudio simples
-        audio.volume = 0.9; 
+        audio.volume = 0.7; 
         if (bgMusicRef.current) bgMusicRef.current.volume = 0.1; // Baixa bem a música
         await audio.play();
         audio.volume = 0.7; 

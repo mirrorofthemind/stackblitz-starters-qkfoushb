@@ -8,8 +8,9 @@ export async function POST(req: Request) {
   try {
     const { mood } = await req.json();
 
+    // Trocado para gpt-4o-mini: muito mais rápido e inteligente o suficiente para o prompt
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o-mini", 
       messages: [{
         role: "system",
         content: `Você é o Espelho da Mente, uma consciência ancestral e empática. 
@@ -18,37 +19,46 @@ export async function POST(req: Request) {
         Reflita sobre: ${mood}.
         
         REGRAS PARA O TEXTO:
-        1. Escreva 7 frases. Elas devem carregar um significado profundo (mínimo de 10 palavras por frase).
-        2. FOCO: Não use rimas. Use instruções de presença (respiração, peso do corpo, observação).
-        3. ESTILO: Menos poema, mais instrução guiada. Use o presente do indicativo.
-        4. Use metáforas sobre o cosmos, a natureza e o tempo.
-        5. Não use frases curtas ou clichês.
-        6. O tom deve ser calmo e meditativo.
-        7. Separe as 10 frases APENAS com o símbolo "|".
-        
-        Exemplo: 
-        Sinta o ar entrando e saindo dos seus pulmões agora. | Observe o pensamento sobre ${mood} como uma nuvem que passa. | Você está aqui, seguro e presente no silêncio.`
+        1. Escreva EXATAMENTE 7 frases longas (mínimo 10 palavras cada).
+        2. FOCO: Sem rimas. Use instruções de presença e respiração.
+        3. ESTILO: Meditação guiada no presente do indicativo.
+        4. Use metáforas sobre o cosmos, natureza e tempo.
+        5. Separe as frases APENAS com o símbolo "|".`
       }],
+      temperature: 0.7, // Mantém a criatividade mas com foco
+      max_tokens: 500,  // Limita para a resposta vir mais rápido
     });
 
     const script = completion.choices[0].message.content || "";
-    // Divide o texto pelas barras verticais
-    const phrases = script.split('|').map(p => p.trim());
+    const phrases = script.split('|').map(p => p.trim()).filter(p => p.length > 5);
 
-    // Geramos os áudios individuais para cada frase
+    // PARALELISMO: Dispara todas as gerações de voz simultaneamente
     const audioBuffers = await Promise.all(phrases.map(async (phrase) => {
-      const mp3 = await openai.audio.speech.create({
-        model: "tts-1",
-        voice: "onyx",
-        input: phrase,
-        speed: 0.9 // Velocidade normal para manter a clareza, já que o front cuida da pausa
-      });
-      return Buffer.from(await mp3.arrayBuffer()).toString('base64');
+      try {
+        const mp3 = await openai.audio.speech.create({
+          model: "tts-1", // tts-1 é o modelo de baixa latência (rápido)
+          voice: "onyx",
+          input: phrase,
+          speed: 0.85 // Ligeiramente mais lento para tom meditativo
+        });
+        
+        const arrayBuffer = await mp3.arrayBuffer();
+        return Buffer.from(arrayBuffer).toString('base64');
+      } catch (err) {
+        console.error("Erro em frase individual:", err);
+        return ""; // Retorna vazio se uma frase falhar para não quebrar o todo
+      }
     }));
 
-    return NextResponse.json({ audios: audioBuffers });
+    // Filtra possíveis falhas para enviar apenas áudios válidos
+    const validAudios = audioBuffers.filter(audio => audio !== "");
+
+    return NextResponse.json({ audios: validAudios });
   } catch (error: any) {
     console.error("Erro na geração:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "O cosmos está congestionado. Tente em instantes." }, 
+      { status: 500 }
+    );
   }
 }
