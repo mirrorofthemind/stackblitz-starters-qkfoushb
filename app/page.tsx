@@ -140,21 +140,21 @@ export default function MirrorOfTheMind() {
     {!showResult ? (
       <div className="w-full space-y-8 animate-in fade-in zoom-in duration-700">
         <label className="block text-lg font-light text-purple-200 italic">
-          {`O que sua mente reflete hoje?`} 
+          {'O que sua mente reflete hoje?'} 
         </label>
         <textarea
           value={reflection}
           onChange={(e) => setReflection(e.target.value)}
           disabled={loading}
           className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 h-44 text-lg shadow-2xl transition-all"
-          placeholder={`Compartilhe seus pensamentos...`}
+          placeholder={'Compartilhe seus pensamentos...'}
         />
         <button
           onClick={handleContemplar}
           disabled={loading || !reflection}
           className="w-full py-5 rounded-full text-xl font-light tracking-[0.2em] bg-gradient-to-r from-purple-600 to-indigo-600 border border-white/10 shadow-[0_0_20px_rgba(147,51,234,0.4)] hover:shadow-[0_0_40px_rgba(147,51,234,0.6)] transition-all disabled:opacity-30 flex items-center justify-center gap-3"
         >
-          {loading ? <Loader2 className="animate-spin" /> : "CONTEMPLAR"}
+          {loading ? <Loader2 className="animate-spin" /> : 'CONTEMPLAR'}
         </button>
       </div>
     ) : (
