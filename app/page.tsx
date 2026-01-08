@@ -96,7 +96,7 @@ export default function MirrorOfTheMind() {
 
       timerRef.current = setInterval(() => { setCurrentTime(prev => prev + 1); }, 1000);
 
-      await new Promise(resolve => setTimeout(resolve, 6000));
+      await new Promise(resolve => setTimeout(resolve, 0 ));
 
       for (let i = 0; i < audioObjects.length; i++) {
         const audio = audioObjects[i];
@@ -113,7 +113,7 @@ export default function MirrorOfTheMind() {
       }
     } catch (error: any) {
       console.error(error);
-      alert("Erro no cosmos: Verifique sua chave API no Netlify.");
+      alert("Erro real: " + (error.message || "Erro desconhecido"));
       setShowResult(false);
     } finally {
       setIsPlaying(false);
