@@ -127,44 +127,44 @@ export default function MirrorOfTheMind() {
       </div>
 
       <main className="z-10 w-full max-w-md flex flex-col items-center text-center space-y-12">
-        <header className="space-y-4">
-          <h1 className="text-4xl md:text-5xl font-extralight tracking-[0.3em] uppercase drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
-            Mirror <span className="block font-medium mt-2">of the mind</span>
-          </h1>
-          <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-purple-400 to-transparent mx-auto" />
-        </header>
+  <header className="space-y-4">
+    <h1 className="text-4xl md:text-5xl font-extralight tracking-[0.3em] uppercase drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+      Mirror <span className="block font-medium mt-2">of the mind</span>
+    </h1>
+    <div className="h-0.5 w-24 bg-gradient-to-r from-transparent via-purple-400 to-transparent mx-auto" />
+  </header>
 
-        <audio ref={bgMusicRef} src="https://raw.githubusercontent.com/mirrorofthemind/public-musics/main/10%20Minutes%20of%20Relaxing%20Piano%20Music%20-%20Wawa%20(youtube).mp3" loop />
+  <audio ref={bgMusicRef} src="https://raw.githubusercontent.com/mirrorofthemind/public-musics/main/10%20Minutes%20of%20Relaxing%20Piano%20Music%20-%20Wawa%20(youtube).mp3" loop />
 
-        <div className="w-full min-h-[400px] flex flex-col items-center justify-center">
-          {!showResult ? (
-            <div className="w-full space-y-8 animate-in fade-in zoom-in duration-700">
-              <label className="block text-lg font-light text-purple-200 italic">
-              O que sua mente reflete hoje?
-              </label>
-              <textarea
-                value={reflection}
-                onChange={(e) => setReflection(e.target.value)}
-                disabled={loading}
-                className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 h-44 text-lg shadow-2xl transition-all"
-                placeholder="Compartilhe seus pensamentos..."
-              />
-              <button
-                onClick={handleContemplar}
-                disabled={loading || !reflection}
-                className="w-full py-5 rounded-full text-xl font-light tracking-[0.2em] bg-gradient-to-r from-purple-600 to-indigo-600 border border-white/10 shadow-[0_0_20px_rgba(147,51,234,0.4)] hover:shadow-[0_0_40px_rgba(147,51,234,0.6)] transition-all disabled:opacity-30 flex items-center justify-center gap-3"
-              >
-                {loading ? <Loader2 className="animate-spin" /> : "CONTEMPLAR"}
-              </button>
-            </div>
-          ) : (
-            <div className="w-full bg-white/10 backdrop-blur-2xl border border-white/20 p-10 rounded-[2.5rem] space-y-8 animate-in zoom-in duration-500 shadow-2xl">
-              <div className="space-y-3">
-                <Sparkles className="mx-auto text-purple-300 animate-pulse" size={32} />
-                <p className="text-purple-100 italic font-light tracking-wide">
-                {loading ? "Iniciando jornada..." : isPlaying ? "Em meditação..." : "Sessão concluída"}
-              </p>
-              </div>
+  <div className="w-full min-h-[400px] flex flex-col items-center justify-center">
+    {!showResult ? (
+      <div className="w-full space-y-8 animate-in fade-in zoom-in duration-700">
+        <label className="block text-lg font-light text-purple-200 italic">
+          {"O que sua mente reflete hoje?"}
+        </label>
+        <textarea
+          value={reflection}
+          onChange={(e) => setReflection(e.target.value)}
+          disabled={loading}
+          className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 h-44 text-lg shadow-2xl transition-all"
+          placeholder="Compartilhe seus pensamentos..."
+        />
+        <button
+          onClick={handleContemplar}
+          disabled={loading || !reflection}
+          className="w-full py-5 rounded-full text-xl font-light tracking-[0.2em] bg-gradient-to-r from-purple-600 to-indigo-600 border border-white/10 shadow-[0_0_20px_rgba(147,51,234,0.4)] hover:shadow-[0_0_40px_rgba(147,51,234,0.6)] transition-all disabled:opacity-30 flex items-center justify-center gap-3"
+        >
+          {loading ? <Loader2 className="animate-spin" /> : "CONTEMPLAR"}
+        </button>
+      </div>
+    ) : (
+      <div className="w-full bg-white/10 backdrop-blur-2xl border border-white/20 p-10 rounded-[2.5rem] space-y-8 animate-in zoom-in duration-500 shadow-2xl">
+        <div className="space-y-3">
+          <Sparkles className="mx-auto text-purple-300 animate-pulse" size={32} />
+          <p className="text-purple-100 italic font-light tracking-wide">
+            {loading ? "Iniciando jornada..." : isPlaying ? "Em meditação..." : "Sessão concluída"}
+          </p>
+        </div>
 
               <div className="py-6 space-y-4">
                 <div className="flex items-center justify-center gap-2 text-2xl font-mono text-purple-200">
